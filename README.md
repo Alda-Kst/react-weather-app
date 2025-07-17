@@ -4,7 +4,7 @@ A simple and stylish weather app built with React and OpenWeatherMap API.
 
 ## 🚀 Live Demo
 
-Coming soon 
+https://alda-kst.github.io/react-weather-app/
 
 ---
 
