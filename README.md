@@ -2,6 +2,8 @@
 
 A modern, sleek, and highly responsive weather application built with **React** and **OpenWeatherMap API**. Featuring a custom-designed **Deep Sea** theme with glassmorphism effects and dynamic background gradients.
 
+🔗 **Live Demo:** [https://Alda-Kst.github.io/react-weather-app](https://Alda-Kst.github.io/react-weather-app)
+
 ---
 
 ## ✨ Features
@@ -28,11 +30,9 @@ A modern, sleek, and highly responsive weather application built with **React** 
 
 ## 📸 Preview
 
-_(Add your screenshots here after uploading them to GitHub)_
-
-| Light Deep Sea                      | Dark Deep Sea                      |
-| ----------------------------------- | ---------------------------------- |
-| ![Light Mode](your-image-link-here) | ![Dark Mode](your-image-link-here) |
+| Light Deep Sea                            | Dark Deep Sea                            |
+| ----------------------------------------- | ---------------------------------------- |
+| ![Light Mode](./assets/light-preview.png) | ![Dark Mode](./assets/light-preview.png) |
 
 ---
 
