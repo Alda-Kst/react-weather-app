@@ -30,9 +30,9 @@ A modern, sleek, and highly responsive weather application built with **React** 
 
 ## 📸 Preview
 
-| Light Deep Sea                            | Dark Deep Sea                            |
-| ----------------------------------------- | ---------------------------------------- |
-| ![Light Mode](./assets/light-preview.png) | ![Dark Mode](./assets/light-preview.png) |
+| Light Deep Sea                            | Dark Deep Sea                           |
+| ----------------------------------------- | --------------------------------------- |
+| ![Light Mode](./assets/light-preview.png) | ![Dark Mode](./assets/dark-preview.png) |
 
 ---
 
