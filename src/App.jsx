@@ -21,6 +21,7 @@ function App() {
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric`
       );
       setWeather(response.data);
+      setCity("");
     } catch (err) {
       setWeather(null);
       setError("City not found. Please try again!");
