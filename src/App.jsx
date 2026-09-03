@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
+import WeatherSkeleton from "./components/WeatherSkeleton";
 
 function App() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [theme, setTheme] = useState("light");
   const [error, setError] = useState("");
@@ -18,13 +20,21 @@ function App() {
     setError("");
     try {
       const key = process.env.REACT_APP_WEATHER_API_KEY;
-      const response = await axios.get(
+      
+      const weatherResponse = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric`
       );
-      setWeather(response.data);
+      
+      const forecastResponse = await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${key}&units=metric`
+      );
+
+      setWeather(weatherResponse.data);
+      setForecast(forecastResponse.data);
       setCity("");
     } catch (err) {
       setWeather(null);
+      setForecast(null);
       setError("City not found. Please try again!");
     }
     setLoading(false);
@@ -86,7 +96,7 @@ function App() {
       </form>
       
       {error && <p className="text-red-500 mt-2 font-medium">{error}</p>}
-      {loading && <p className="mt-2 font-medium opacity-80">Loading...</p>}
+      {loading && <WeatherSkeleton />}
 
       {weather && (
         <div className="mt-8 p-6 bg-white/[0.05] rounded-[20px]">
@@ -123,6 +133,33 @@ function App() {
             <div className="info-item text-[0.65rem] font-semibold uppercase tracking-[0.5px] opacity-80 whitespace-nowrap">
               Wind: {weather.wind.speed} m/s
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5-Day Forecast Section */}
+      {forecast && (
+        <div className="mt-6 p-4 bg-white/[0.05] rounded-[20px]">
+          <h3 className="text-sm font-bold uppercase tracking-wider mb-3 opacity-80">5-Day Forecast</h3>
+          <div className="grid grid-cols-5 gap-2">
+            {forecast.list
+              .filter((reading) => reading.dt_txt.includes("12:00:00"))
+              .map((day, index) => {
+                const date = new Date(day.dt * 1000);
+                const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+                
+                return (
+                  <div key={index} className="flex flex-col items-center justify-center p-2 bg-white/[0.03] rounded-xl">
+                    <span className="text-xs font-semibold opacity-70">{dayName}</span>
+                    <img 
+                      className="w-10 h-10 my-1"
+                      src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`} 
+                      alt={day.weather[0].description} 
+                    />
+                    <span className="text-xs font-bold">{Math.round(day.main.temp)}°</span>
+                  </div>
+                );
+              })}
           </div>
         </div>
       )}
