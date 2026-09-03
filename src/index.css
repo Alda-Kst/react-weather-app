@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradientBG 18s ease infinite;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: background 0.8s ease;
+}
+
+body.light {
+  background: linear-gradient(-45deg, #e0f7fa, #b2ebf2, #e1f5fe);
+  color: #006064;
+}
+
+body.dark {
+  background: linear-gradient(-45deg, #001219, #00212e, #005f73);
+  color: #94d2bd;
+}

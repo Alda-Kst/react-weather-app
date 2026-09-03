@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./styles.css";
+import "./index.css";
 
 function App() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [theme, setTheme] = useState("light");
-  const [error,setError] = useState("");
-// Fetch weather data from API
+  const [error, setError] = useState("");
+
+  // Fetch weather data from API
   const fetchWeather = async (e) => {
     if (e) e.preventDefault();
     if (!city) return;
@@ -37,59 +38,91 @@ function App() {
 
   // Update body class for theme
   useEffect(() => {
-    document.body.className = theme;
+    document.body.className = `${theme} animate-gradient`;
   }, [theme]);
 
   return (
-    <div className="container">
-      <h1>Daily Weather App</h1>
+    <div className={`backdrop-blur-md p-6 sm:p-10 rounded-[2rem] w-full max-w-[420px] text-center box-border border shadow-[0_10px_40px_rgba(0,96,100,0.1)] transition-all duration-300 ${
+      theme === "light" 
+        ? "bg-white/55 border-white/40 text-[#006064]" 
+        : "bg-[#001219]/85 border-[#94d2bd]/10 text-[#94d2bd]"
+    }`}>
+      <h1 className="mt-0 mb-6 font-bold tracking-[-0.5px] text-[1.4rem] md:text-2xl">Daily Weather App</h1>
       
-      <button className="theme-toggle" onClick={toggleTheme}>
+      <button 
+        className={`mb-8 px-[22px] py-[10px] rounded-[25px] cursor-pointer font-montserrat font-semibold text-[0.85rem] transition-all duration-300 ${
+          theme === "light" 
+            ? "bg-[#006064]/[0.05] border border-black/[0.05] text-[#006064]" 
+            : "bg-[#94d2bd]/10 border border-transparent text-[#94d2bd]"
+        }`}
+        onClick={toggleTheme}
+      >
         {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
       </button>
 
       {/* Search form */}
-      <form onSubmit={fetchWeather}>
+      <form onSubmit={fetchWeather} className="flex flex-col items-center w-full">
         <input
           type="text"
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          placeholder="Enter city name (e.g. Athens)"
+          placeholder="Enter city (e.g. Athens)"
+          className={`p-[0.9rem] w-full font-montserrat text-sm sm:text-base rounded-[14px] outline-none box-border mb-[15px] transition-all duration-300 ${
+            theme === "light"
+              ? "border border-[#006064]/10 bg-white/50 text-[#006064] placeholder:text-[#006064]/50"
+              : "bg-white/[0.05] text-white border border-[#94d2bd]/20 placeholder:text-white/40"
+          }`}
         />
-        <button type="submit">Search</button>
+        <button 
+          type="submit"
+          className={`p-[0.9rem_1.5rem] rounded-[14px] border-none font-montserrat font-bold cursor-pointer w-full transition-all duration-300 mb-[10px] transform hover:-translate-y-0.5 ${
+            theme === "light"
+              ? "bg-[#00838f] text-white shadow-[0_4px_15px_rgba(0,131,143,0.3)] hover:bg-[#006064]"
+              : "bg-[#00afb9] text-[#001219] shadow-[0_4px_15px_rgba(0,175,185,0.4)] hover:bg-[#94d2bd]"
+          }`}
+        >
+          Search
+        </button>
       </form>
-      {error && <p className="error-text">{error}</p>}
-      {loading && <p className="loading-text">Loading...</p>}
+      
+      {error && <p className="text-red-500 mt-2 font-medium">{error}</p>}
+      {loading && <p className="mt-2 font-medium opacity-80">Loading...</p>}
 
       {weather && (
-        <div className="weather">
-          <h2>{weather.name}</h2>
+        <div className="mt-8 p-6 bg-white/[0.05] rounded-[20px]">
+          <h2 className="text-xl font-bold mb-2">{weather.name}</h2>
           
           <img 
-            className="weather-icon"
+            className="weather-icon mx-auto my-0"
             src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} 
             alt={weather.weather[0].description} 
           />
           
-          <p className="description">{weather.weather[0].description}</p>
+          <p className="description capitalize opacity-90 mb-4">{weather.weather[0].description}</p>
           
           {/* Temperature Container */}
-          <div className="temp-container">
-            <div className="temp-item">
+          <div className="temp-container flex justify-center items-center gap-[15px] text-[2.2rem] font-bold">
+            <div className="temp-item flex items-center">
               <span className="temp-value">{Math.round(weather.main.temp)}</span>
-              <span className="temp-unit">°C</span>
+              <span className={`temp-unit text-[1.2rem] ml-1 ${theme === "light" ? "text-[#00838f]" : "text-[#00afb9]"}`}>°C</span>
             </div>
-            <div className="temp-separator">|</div>
-            <div className="temp-item">
+            <div className="temp-separator font-light opacity-40">|</div>
+            <div className="temp-item flex items-center">
               <span className="temp-value">{Math.round((weather.main.temp * 9) / 5 + 32)}</span>
-              <span className="temp-unit">°F</span>
+              <span className={`temp-unit text-[1.2rem] ml-1 ${theme === "light" ? "text-[#00838f]" : "text-[#00afb9]"}`}>°F</span>
             </div>
           </div>
 
           {/* Extra Info Section - Humidity & Wind */}
-          <div className="extra-info">
-            <div className="info-item">Humidity: {weather.main.humidity}%</div>
-            <div className="info-item">Wind: {weather.wind.speed} m/s</div>
+          <div className={`extra-info mt-[15px] pt-[15px] flex justify-between items-center gap-6 px-6 border-t ${
+            theme === "light" ? "border-[#006064]/10" : "border-[#94d2bd]/10"
+          }`}>
+            <div className="info-item text-[0.65rem] font-semibold uppercase tracking-[0.5px] opacity-80 whitespace-nowrap">
+              Humidity: {weather.main.humidity}%
+            </div>
+            <div className="info-item text-[0.65rem] font-semibold uppercase tracking-[0.5px] opacity-80 whitespace-nowrap">
+              Wind: {weather.wind.speed} m/s
+            </div>
           </div>
         </div>
       )}
