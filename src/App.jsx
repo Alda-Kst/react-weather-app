@@ -11,7 +11,7 @@ function App() {
   const [theme, setTheme] = useState("light");
   const [error, setError] = useState("");
 
-  // Fetch weather data from API
+  // Fetch weather data from API using Geocoding support
   const fetchWeather = async (e) => {
     if (e) e.preventDefault();
     if (!city) return;
@@ -21,12 +21,24 @@ function App() {
     try {
       const key = process.env.REACT_APP_WEATHER_API_KEY;
       
+      // 1. Resolve city name to coordinates (supports multi-language inputs like "Αθήνα")
+      const geoResponse = await axios.get(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${key}`
+      );
+
+      if (!geoResponse.data || geoResponse.data.length === 0) {
+        throw new Error("City not found");
+      }
+
+      const { lat, lon } = geoResponse.data[0];
+
+      // 2. Fetch weather and forecast using lat/lon
       const weatherResponse = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}&units=metric`
       );
       
       const forecastResponse = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${key}&units=metric`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${key}&units=metric`
       );
 
       setWeather(weatherResponse.data);
@@ -100,7 +112,7 @@ function App() {
 
       {weather && (
         <div className="mt-8 p-6 bg-white/[0.05] rounded-[20px]">
-          <h2 className="text-xl font-bold mb-2">{weather.name}</h2>
+          <h2 className="text-xl font-bold mb-2">{weather.name}, {weather.sys.country}</h2>
           
           <img 
             className="weather-icon mx-auto my-0"
