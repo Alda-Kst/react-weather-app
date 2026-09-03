@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./index.css";
 import WeatherSkeleton from "./components/WeatherSkeleton";
@@ -11,19 +11,17 @@ function App() {
   const [theme, setTheme] = useState("light");
   const [error, setError] = useState("");
 
-  // Fetch weather data from API using Geocoding support
-  const fetchWeather = async (e) => {
-    if (e) e.preventDefault();
-    if (!city) return;
+  const fetchWeatherData = useCallback(async (cityName) => {
+    if (!cityName) return;
     
     setLoading(true);
     setError("");
     try {
       const key = process.env.REACT_APP_WEATHER_API_KEY;
       
-      // 1. Resolve city name to coordinates (supports multi-language inputs like "Αθήνα")
+      // 1. Resolve city name to coordinates
       const geoResponse = await axios.get(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${key}`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${key}`
       );
 
       if (!geoResponse.data || geoResponse.data.length === 0) {
@@ -43,13 +41,30 @@ function App() {
 
       setWeather(weatherResponse.data);
       setForecast(forecastResponse.data);
-      setCity("");
+      
+      // Save city in localStorage
+      localStorage.setItem("lastCity", cityName);
     } catch (err) {
       setWeather(null);
       setForecast(null);
       setError("City not found. Please try again!");
     }
     setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const savedCity = localStorage.getItem("lastCity");
+    if (savedCity) {
+      fetchWeatherData(savedCity);
+    }
+  }, [fetchWeatherData]);
+
+  // Handle form submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!city.trim()) return;
+    fetchWeatherData(city);
+    setCity(""); 
   };
 
   // Toggle Dark/Light mode
@@ -83,7 +98,7 @@ function App() {
       </button>
 
       {/* Search form */}
-      <form onSubmit={fetchWeather} className="flex flex-col items-center w-full">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center w-full">
         <input
           type="text"
           value={city}
